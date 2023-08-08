@@ -1,16 +1,19 @@
-# notepad
+# Flutter Notepad App with Firebase Storage
 
-A new Flutter project.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- **User Authentication**: Secure user registration and login functionality using Firebase Authentication.
 
-A few resources to get you started if this is your first Flutter project:
+- **Note Management**: Create, edit, and delete notes.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Real-time Sync**: All notes are synchronized in real-time with Firebase, ensuring your data is always up-to-date.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+## Installation
+
+Clone this repository:
+   ```bash
+   git clone https://github.com/swaymax1/notepad.git
+   cd notepad
+   flutter pub get
