@@ -1,0 +1,56 @@
+StreamBuilder(
+              stream: state.noteStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return const Center(child: Text('Error'));
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('No notes'));
+                }
+                List noteCards = [];
+                snapshot.data!.docs.forEach((doc) {
+                  var note = Note.fromMap(doc.data() as Map<String, dynamic>);
+                  noteCards.add(Wrap(
+                    child: NoteCard(
+                      note: note,
+                      edit: () {
+                        Navigator.pushNamed(context, '/note-edit', arguments: {
+                          'note': note,
+                          'reference': doc.reference
+                        });
+                      },
+                    ),
+                  ));
+                });
+                // notes appear in two columns and resize depending on child text
+                return GridView.count(
+                  crossAxisCount: 2,
+                  childAspectRatio: 2.5,
+                  children: noteCards,
+                );
+
+                // return GridView.builder(
+                //   itemCount: snapshot.data!.docs.size,
+                //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                //       crossAxisCount: 2, childAspectRatio: 100),
+                //   itemBuilder: (context, index) {
+                //     var document = snapshot.data!.docs[index];
+                //     Note note = Note(
+                //       noteData: document['data'],
+                //       timeCreated: document['timeStamp'],
+                //     );
+                //     return NoteCard(
+                //       note: note,
+                //       edit: () {
+                //         Navigator.pushNamed(context, '/note-edit', arguments: {
+                //           'note': note,
+                //           'reference': document.reference
+                //         });
+                //       },
+                //     );
+                //   },
+                // );
+              }),

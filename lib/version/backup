@@ -1,0 +1,117 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:notepad/utils/widgets.dart';
+import 'package:provider/provider.dart';
+import '../services/data_state.dart';
+import '../models/note.dart';
+import 'package:notepad/services/auth_state.dart';
+
+enum ViewMode { grid, list }
+
+class Home extends StatefulWidget {
+  Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  List<DocumentReference> selectedNotesRefs = [];
+  ViewMode viewMode = ViewMode.grid;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<Data>(
+      builder: (context, state, child) {
+        return Scaffold(
+          drawer: Drawer(
+            child: ListView(
+              children: [
+                const DrawerHeader(
+                  child: Text('header'),
+                ),
+                ListTile(
+                  title: const Text('Sign out'),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+          appBar: SpacedAppBar(
+            child: AppBar(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              title: TextFormField(
+                decoration: const InputDecoration(
+                  hintText: 'Search your notes',
+                  hintStyle: TextStyle(),
+                  border: InputBorder.none,
+                ),
+              ),
+              actions: [
+                if (selectedNotesRefs.isNotEmpty)
+                  IconButton(
+                      onPressed: () {
+                        state.deleteNotes(selectedNotesRefs);
+                      },
+                      icon: const Icon(Icons.delete)),
+              ],
+            ),
+          ),
+          body: viewMode == ViewMode.grid
+              ? MasonryGridView.builder(
+                  gridDelegate:
+                      const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2),
+                  itemCount: state.notes.length,
+                  itemBuilder: (context, index) {
+                    Note note = state.notes[index];
+                    return NoteCardGesture(note: note, selectedNotesRefs: selectedNotesRefs, longPress: () {
+                    }, tapWitoutSelection: tapWitoutSelection);
+                  },
+                )
+              : ,
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/note-edit');
+            },
+            tooltip: 'Add note',
+            child: const Icon(Icons.add),
+          ),
+        );
+      },
+    );
+  }
+}
+
+
+// nkWell(
+//                       onTap: () {
+//                         if (selectedNotesRefs.contains(note.reference)) {
+//                           setState(() {
+//                             selectedNotesRefs.remove(note.reference);
+//                           });
+//                         } else if (selectedNotesRefs.isNotEmpty) {
+//                           setState(() {
+//                             selectedNotesRefs.add(note.reference!);
+//                           });
+//                         } else {
+//                           Navigator.pushNamed(context, '/note-edit',
+//                               arguments: {
+//                                 'data': note.noteData,
+//                                 'reference': note.reference
+//                               });
+//                         }
+//                       },
+//                       onLongPress: () {
+//                         setState(() {
+//                           selectedNotesRefs.add(note.reference!);
+//                         });
+//                       },
+//                       child: NoteCard(
+//                         note: note,
+//                         isSelected: selectedNotesRefs.contains(note.reference),
+//                       ),
+//                     );
